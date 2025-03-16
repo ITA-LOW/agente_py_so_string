@@ -7,19 +7,14 @@ def main():
     agent = Agent()
     
     plan_library = [
-        ('adjust_vision', {'context': {'position': 'up_left'}, 'plan': ['look_at_00']}),
-        ('adjust_vision', {'context': {'position': 'up_middle'}, 'plan': ['look_at_01']}),
-        ('adjust_vision', {'context': {'position': 'up_right'}, 'plan': ['look_at_02']}),
-        ('adjust_vision', {'context': {'position': 'middle_left'}, 'plan': ['look_at_10']}),
-        ('adjust_vision', {'context': {'position': 'center'}, 'plan': ['look_at_11']}),
-        ('adjust_vision', {'context': {'position': 'middle_right'}, 'plan': ['look_at_12']}),
-        ('adjust_vision', {'context': {'position': 'down_left'}, 'plan': ['look_at_20']}),
-        ('adjust_vision', {'context': {'position': 'down_middle'}, 'plan': ['look_at_21']}),
-        ('adjust_vision', {'context': {'position': 'down_right'}, 'plan': ['look_at_22']}),
+        ('adjust_vision', {'context': {'position': pos}, 'plan': [pos]}) for pos in [
+            "up_left", "up_middle", "up_right",
+            "middle_left", "center", "middle_right",
+            "down_left", "down_middle", "down_right"
+        ]
     ]
     
     agent.set_plan_library(plan_library)
-    agent.add_beliefs({'profile': 'confident'})  # Perfil padrão
     
     cap = cv2.VideoCapture(0)
     if not cap.isOpened():
@@ -28,12 +23,10 @@ def main():
     
     while cap.isOpened():
         ret, frame = cap.read()
-        
         if not ret:
             print("Erro ao ler o frame.")
             break
         
-        # Detecta a posição do rosto
         position = detect_face_position(frame)
         
         if position:
@@ -41,13 +34,13 @@ def main():
             agent.add_desires("adjust_vision")
             goal = agent.get_desires()
             agent.update_intention(goal)
-            agent.execute_intention()
+            agent.execute_intention()  # Agora já chama a movimentação
         
-        cv2.imshow("Webcam", frame)  # Exibe o frame
+        cv2.imshow("Webcam", frame)
         if cv2.waitKey(1) & 0xFF == ord('q'):
-            break  # Encerra o loop se 'q' for pressionado
+            break
         
-        time.sleep(0.1)  # Delay para processamento
+        time.sleep(0.1)
     
     cap.release()
     cv2.destroyAllWindows()

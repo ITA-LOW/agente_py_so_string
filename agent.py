@@ -1,3 +1,5 @@
+from motion import move_eye
+
 class PlanLibrary:
     def __init__(self):
         self.plans = {}
@@ -37,7 +39,7 @@ class PlanLibrary:
 
 class Action:
     def look_at_position(self, position):
-        print(f"###> Looking at position {position} <### ")
+        move_eye(position)  # Chama a função de movimento ao inves plotar uma string
 
 class Agent:
     def __init__(self):
